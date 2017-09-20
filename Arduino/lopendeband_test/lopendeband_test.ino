@@ -23,7 +23,7 @@ float offsets[3] = { CONTAINER1, CONTAINER2, CONTAINER3 };
 
 void setup()
 {
-  Serial.begin(9600);
+  Serial.begin(250000);
   stepper->Setup();
   stepper->RotateTo(START_POINT);
   

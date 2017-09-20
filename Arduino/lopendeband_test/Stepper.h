@@ -6,6 +6,9 @@
 #define MIN_DELAY 10
 #define MAX_DELAY 100
 
+#define __LINEAR_RAMP
+//#define __EXPONENTIAL_RAMP
+
 class Stepper
 {
 private:

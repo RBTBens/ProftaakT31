@@ -40,6 +40,28 @@ void Stepper::RotateTo(float fraction)
   digitalWrite(DIR, steps > 0 ? LOW : HIGH);
   digitalWrite(ENA, HIGH);
 
+#if defined(__LINEAR_RAMP) || defined(__EXPONENTIAL_RAMP)
+#ifdef __LINEAR_RAMP
+  int16_t half = abs(steps) / 2;
+
+  for (int i = 0; i < half; i++)
+  {
+    unsigned int d = map(i, 0, half, MAX_DELAY, MIN_DELAY);
+    digitalWrite(PUL, HIGH);
+    delayMicroseconds(d);
+    digitalWrite(PUL, LOW);
+    delayMicroseconds(d);
+  }
+
+  for (int i = 0; i < half; i++)
+  {
+    unsigned int d = map(i, 0, half, MIN_DELAY, MAX_DELAY);
+    digitalWrite(PUL, HIGH);
+    delayMicroseconds(d);
+    digitalWrite(PUL, LOW);
+    delayMicroseconds(d);
+  }
+#elif __EXPONENTIAL_RAMP
   for (int i = 0; i < abs(steps); i++)
   {
     float x = (PI / abs(steps)) * i;
@@ -50,5 +72,15 @@ void Stepper::RotateTo(float fraction)
     digitalWrite(PUL, LOW);
     delayMicroseconds(d);
   }
+#endif // __EXPONENTIAL_RAMP
+#else // !(defined(__LINEAR_RAMP) || defined(__EXPONENTIAL_RAMP))
+  for (int i = 0; i < abs(steps); i++)
+  {
+    digitalWrite(PUL, HIGH);
+    delayMicroseconds(MAX_DELAY);
+    digitalWrite(PUL, LOW);
+    delayMicroseconds(MAX_DELAY);
+  }
+#endif defined(__LINEAR_RAMP) || defined(__EXPONENTIAL_RAMP)
 }
 
